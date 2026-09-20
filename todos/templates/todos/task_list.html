@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список задач</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Иконки Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 1rem;
+        }
+
+        .btn-rounded {
+            border-radius: 2rem;
+        }
+
+        .task-done {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container py-5" style="max-width: 750px;">
+        <!-- Шапка -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 fw-bold text-dark mb-1"><i class="bi bi-check2-square text-primary me-2"></i>Мои задачи
+                </h1>
+                <p class="text-muted small mb-0">Управление делами</p>
+            </div>
+            <a href="{% url 'task_create' %}" class="btn btn-primary btn-rounded shadow-sm px-4">
+                <i class="bi bi-plus-lg me-1"></i> Добавить задачу
+            </a>
+        </div>
+
+        <!-- Список задач -->
+        {% if tasks %}
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="list-group list-group-flush">
+                {% for task in tasks %}
+                <div class="list-group-item d-flex align-items-center justify-content-between p-3">
+                    <div class="d-flex align-items-center flex-grow-1 me-3">
+                        <!-- Иконка переключения статуса -->
+                        <a href="{% url 'task_toggle' task.pk %}" class="text-decoration-none me-3 fs-5"
+                            title="Изменить статус">
+                            {% if task.is_done %}
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            {% else %}
+                            <i class="bi bi-circle text-secondary"></i>
+                            {% endif %}
+                        </a>
+
+                        <!-- Название и дата -->
+                        <div>
+                            <a href="{% url 'task_detail' task.pk %}"
+                                class="text-dark text-decoration-none fw-semibold">
+                                <span class="{% if task.is_done %}task-done{% endif %}">{{ task.title }}</span>
+                            </a>
+                            <div class="text-muted small">
+                                <i class="bi bi-clock me-1"></i>{{ task.created_at|date:"d.m.Y H:i" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="btn-group">
+                        <a href="{% url 'task_detail' task.pk %}" class="btn btn-outline-secondary btn-sm"
+                            title="Детали">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="{% url 'task_delete' task.pk %}" class="btn btn-outline-danger btn-sm" title="Удалить">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <!-- Пустое состояние -->
+        <div class="card border-0 shadow-sm text-center p-5">
+            <i class="bi bi-inbox text-muted display-4 mb-3"></i>
+            <h5 class="text-muted">Задач пока нет</h5>
+            <p class="text-muted small mb-4">Нажмите кнопку ниже, чтобы создать свою первую задачу</p>
+            <div>
+                <a href="{% url 'task_create' %}" class="btn btn-primary btn-rounded px-4">
+                    <i class="bi bi-plus-lg me-1"></i> Создать задачу
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+
+</html>
